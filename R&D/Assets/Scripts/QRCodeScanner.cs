@@ -1,11 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using ZXing;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
-public class QRCodeScanner : MonoBehaviour
+public class QRCodeScanner : NetworkBehaviour
 {
     private WebCamTexture webCamTexture;
     private Rect screenRect;
+
+    CardSpawner cs;
 
     void Start()
     {
@@ -22,10 +26,14 @@ public class QRCodeScanner : MonoBehaviour
         {
             Debug.LogError("No camera found on the device.");
         }
+
+        SceneManager.sceneLoaded += InitCardSpawner;
     }
 
     void Update()
     {
+        if (!IsOwner) { return; }
+
         if (webCamTexture != null && webCamTexture.isPlaying)
         {
             // Convert Color32 array to grayscale byte array
@@ -38,12 +46,8 @@ public class QRCodeScanner : MonoBehaviour
 
             if (result != null)
             {
-                // QR code detected, do something with the result
-                Debug.Log("QR Code Detected: " + result.Text);
-            }
-            else
-            {
-                Debug.Log("No result");
+                Debug.Log("QR Recognized");
+                cs.AddCardServerRPC(int.Parse(result.Text));
             }
         }
     }
@@ -55,6 +59,11 @@ public class QRCodeScanner : MonoBehaviour
         {
             GUI.DrawTexture(screenRect, webCamTexture, ScaleMode.ScaleToFit);
         }
+    }
+
+    void InitCardSpawner(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Server") { cs = GameObject.Find("Game Manager").GetComponent<CardSpawner>(); }
     }
 
     private byte[] GetGrayscaleBytes(Color32[] colors, int width, int height)

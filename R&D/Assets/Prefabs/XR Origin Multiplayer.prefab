@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 1831311870272552568}
   - component: {fileID: 988464967159313497}
   - component: {fileID: 8101678639298730775}
+  - component: {fileID: 1354876531240882586}
   m_Layer: 0
   m_Name: XR Origin Multiplayer
   m_TagString: Untagged
@@ -199,7 +200,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59c74ee353713d94aa820867a6bc793f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveAmount: 2
+  moveAmount: 1.5
+--- !u!114 &1354876531240882586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6251117134965882264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84f4dec9c58680c47981339808c0c935, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6251117135167729873
 GameObject:
   m_ObjectHideFlags: 0

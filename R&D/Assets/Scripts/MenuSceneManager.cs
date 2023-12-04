@@ -6,7 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class MenuSceneManager : NetworkBehaviour
 {
-    private void Awake()
+    [SerializeField] GameObject xrRig;
+
+    private void Start()
     {
         NetworkManager.OnServerStarted += LoadServer;
     }
