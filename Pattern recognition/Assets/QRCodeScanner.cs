@@ -41,10 +41,10 @@ public class QRCodeScanner : MonoBehaviour
                 // QR code detected, do something with the result
                 Debug.Log("QR Code Detected: " + result.Text);
             }
-            else
-            {
-                Debug.Log("No result");
-            }
+            //else
+            //{
+            //    Debug.Log("No result");
+            //}
         }
     }
 

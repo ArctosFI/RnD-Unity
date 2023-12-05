@@ -34,15 +34,21 @@ public class QRCodeScanner : NetworkBehaviour
     {
         if (!IsOwner) { return; }
 
+        Debug.Log((webCamTexture != null).ToString() + "," + webCamTexture.isPlaying);
+
         if (webCamTexture != null && webCamTexture.isPlaying)
         {
             // Convert Color32 array to grayscale byte array
             byte[] grayscaleBytes = GetGrayscaleBytes(webCamTexture.GetPixels32(), webCamTexture.width, webCamTexture.height);
-
+            Debug.Log("Update 1");
             // Use BarcodeReader on the grayscale byte array
             LuminanceSource luminanceSource = new RGBLuminanceSource(grayscaleBytes, webCamTexture.width, webCamTexture.height);
+            Debug.Log("Update 2");
             BarcodeReaderGeneric barcodeReader = new BarcodeReaderGeneric();
+            Debug.Log("Update 3");
             Result result = barcodeReader.Decode(luminanceSource);
+
+            Debug.Log("Update 4");
 
             if (result != null)
             {
