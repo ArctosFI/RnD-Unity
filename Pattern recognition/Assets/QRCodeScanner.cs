@@ -5,6 +5,8 @@ using ZXing;
 public class QRCodeScanner : MonoBehaviour
 {
     private WebCamTexture webCamTexture;
+    private bool shouldRestartWebCam = false;
+
     private Rect screenRect;
 
     void Start()
@@ -15,18 +17,25 @@ public class QRCodeScanner : MonoBehaviour
         if (WebCamTexture.devices.Length > 0)
         {
             // Use the first available camera
-            webCamTexture = new WebCamTexture(WebCamTexture.devices[0].name, Screen.width, Screen.height);
-            webCamTexture.Play();
-        }
-        else
-        {
-            Debug.LogError("No camera found on the device.");
+            StartCoroutine(StartWebCam());
         }
     }
 
-    void Update()
+    IEnumerator StartWebCam()
     {
-        if (webCamTexture != null && webCamTexture.isPlaying)
+        webCamTexture = new WebCamTexture(WebCamTexture.devices[0].name, Screen.width, Screen.height);
+        webCamTexture.Play();
+
+        // Wait until the webcam has fully started
+        yield return new WaitUntil(() => webCamTexture.didUpdateThisFrame);
+
+        // Start processing frames
+        StartCoroutine(ProcessFrames());
+    }
+
+    IEnumerator ProcessFrames()
+    {
+        while (true)
         {
             // Convert Color32 array to grayscale byte array
             byte[] grayscaleBytes = GetGrayscaleBytes(webCamTexture.GetPixels32(), webCamTexture.width, webCamTexture.height);
@@ -40,11 +49,25 @@ public class QRCodeScanner : MonoBehaviour
             {
                 // QR code detected, do something with the result
                 Debug.Log("QR Code Detected: " + result.Text);
+
+                // Stop the webcam when a QR code is detected
+                StopWebCam();
+
+                // Set the flag to restart the webcam
+                shouldRestartWebCam = true;
             }
-            //else
-            //{
-            //    Debug.Log("No result");
-            //}
+
+            yield return null;
+        }
+    }
+
+    void Update()
+    {
+        if (shouldRestartWebCam)
+        {
+            // Use a coroutine to restart the webcam
+            StartCoroutine(StartWebCam());
+            shouldRestartWebCam = false;
         }
     }
 
@@ -69,5 +92,13 @@ public class QRCodeScanner : MonoBehaviour
         }
 
         return grayscaleBytes;
+    }
+
+    private void StopWebCam()
+    {
+        if (webCamTexture != null && webCamTexture.isPlaying)
+        {
+            webCamTexture.Stop();
+        }
     }
 }
